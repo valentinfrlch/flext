@@ -5,20 +5,16 @@ import { fusion } from 'backend/Fusion';
 let user = wixUsers.currentUser
 
 $w.onReady(async function () {
-    var disliked = []
-    var searchDisliked = await wixData.query("MemberAntiPredictions").eq("_owner", user.id).find()
-    for (var z = 0; z < searchDisliked.items.length; z++) {
-        disliked.push(searchDisliked.items[z].movie)
-    }
-    console.log(disliked)
     var titles = []
-    var searchLiked = await wixData.query("MemberPredictions").eq("_owner", user.id).find()
-    for (var z = 0; z < searchLiked.items.length; z++) {
-        titles.push(searchLiked.items[z].movie.title)
+    var items = await $w("#dataset25").getItems(0, 5)
+    for (var i = 0; i < items.items.length; i++) {
+        titles.push(items.items[i].title)
     }
     console.log(titles)
+    //titles = ["Stranger Things", "Inception"]
     var fusionReturn = await fusion(titles) //cloud computed predictions
-    await $w("#dataset42").setFilter(wixData.filter().hasSome("title", fusionReturn).not(wixData.filter().hasSome("_id", disliked)))
+    console.log(fusionReturn)
+    await $w("#dataset42").setFilter(wixData.filter().hasSome("title", fusionReturn))
 
     $w("#dataset5").onReady(function () {
         $w("#dataset42").onReady(function () {
@@ -28,7 +24,7 @@ $w.onReady(async function () {
 })
 
 function forEachItem() {
-    $w("#repeater1").forEachItem(async ($item, itemData, index) => {
+    $w("#repeater1").forEachItem(async ($item, itemData) => {
         //check if item is in wishlist
         var query = await wixData.query("myList").eq("movieId", itemData.item._id).eq("_owner", wixUsers.currentUser.id).find()
         if (query.items.length > 0) {
@@ -36,25 +32,27 @@ function forEachItem() {
         } else {
             $item("#notInWishlist").show()
         }
-        let seasons = itemData.item.seasons
-        let genre = itemData.item.genre
-        let tags01 = itemData.item.tags
-        let tags02 = itemData.item.tags02
-        let fsk = itemData.item.fsk
-        let keyword01 = itemData.item.keywords[0]
-        let keyword02 = itemData.item.keywords[1]
-        var shortText = itemData.item.description.split('. ', 1)[0] + "."
+        try {
+            let seasons = itemData.item.seasons
+            let genre = itemData.item.genre
+            let tags01 = itemData.item.tags
+            let tags02 = itemData.item.tags02
+            let fsk = itemData.item.fsk
+            let keyword01 = itemData.item.keywords[0]
+            let keyword02 = itemData.item.keywords[1]
+            var shortText = itemData.item.description.split('. ', 1)[0] + "."
 
-        let runtime;
-        if (itemData.item.serie !== true) {
-            runtime = minsToHours(itemData.item.runtime)[0] + "h " + minsToHours(itemData.item.runtime)[1] + "m"
-        }
-        let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
-        $item("#text105").text = theTags
-        $item("#text106").text = shortText
+            let runtime;
+            if (itemData.item.serie !== true) {
+                runtime = minsToHours(itemData.item.runtime)[0] + "h " + minsToHours(itemData.item.runtime)[1] + "m"
+            }
+            let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
+            $item("#text103").text = theTags
+            $item("#text66").text = shortText
+        } catch (err) { console.log("shit") }
     })
 
-    $w("#repeater2").forEachItem(async ($item, itemData, index) => {
+    $w("#repeater2").forEachItem(async ($item, itemData) => {
         //check if item is in wishlist
         var query = await wixData.query("myList").eq("movieId", itemData.item._id).eq("_owner", wixUsers.currentUser.id).find()
         if (query.items.length > 0) {
@@ -62,22 +60,24 @@ function forEachItem() {
         } else {
             $item("#image93").show()
         }
-        let seasons = itemData.item.seasons
-        let genre = itemData.item.genre
-        let tags01 = itemData.item.tags
-        let tags02 = itemData.item.tags02
-        let fsk = itemData.item.fsk
-        let keyword01 = itemData.item.keywords[0]
-        let keyword02 = itemData.item.keywords[1]
-        var shortText = itemData.item.description.split('. ', 1)[0] + "."
+        try {
+            let seasons = itemData.item.seasons
+            let genre = itemData.item.genre
+            let tags01 = itemData.item.tags
+            let tags02 = itemData.item.tags02
+            let fsk = itemData.item.fsk
+            let keyword01 = itemData.item.keywords[0]
+            let keyword02 = itemData.item.keywords[1]
+            var shortText = itemData.item.description.split('. ', 1)[0] + "."
 
-        let runtime;
-        if (itemData.item.serie !== true) {
-            runtime = minsToHours(itemData.item.runtime)[0] + "h " + minsToHours(itemData.item.runtime)[1] + "m"
-        }
-        let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
-        $item("#text66").text = theTags
-        $item("#text103").text = shortText
+            let runtime;
+            if (itemData.item.serie !== true) {
+                runtime = minsToHours(itemData.item.runtime)[0] + "h " + minsToHours(itemData.item.runtime)[1] + "m"
+            }
+            let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
+            $item("#text105").text = theTags
+            $item("#text106").text = shortText
+        } catch (err) { console.log("shit") }
     })
 }
 
