@@ -11,7 +11,7 @@ $w.onReady(async function () {
         titles.push(items.items[i].title)
     }
     console.log(titles)
-    //titles = ["Stranger Things", "Inception"]
+    titles = ["Stranger Things", "Inception"]
     var fusionReturn = await fusion(titles) //cloud computed predictions
     console.log(fusionReturn)
     await $w("#dataset42").setFilter(wixData.filter().hasSome("title", fusionReturn))
@@ -49,35 +49,36 @@ function forEachItem() {
             let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
             $item("#text103").text = theTags
             $item("#text66").text = shortText
-        } catch (err) { console.log("shit") }
+        } catch (err) { console.log("Exception occurred") }
     })
 
     $w("#repeater2").forEachItem(async ($item, itemData) => {
         //check if item is in wishlist
-        var query = await wixData.query("myList").eq("movieId", itemData.item._id).eq("_owner", wixUsers.currentUser.id).find()
+        console.log($item, itemData)
+        var query = await wixData.query("myList").eq("movieId", itemData._id).eq("_owner", wixUsers.currentUser.id).find()
         if (query.items.length > 0) {
             $item("#image94").show()
         } else {
             $item("#image93").show()
         }
         try {
-            let seasons = itemData.item.seasons
-            let genre = itemData.item.genre
-            let tags01 = itemData.item.tags
-            let tags02 = itemData.item.tags02
-            let fsk = itemData.item.fsk
-            let keyword01 = itemData.item.keywords[0]
-            let keyword02 = itemData.item.keywords[1]
-            var shortText = itemData.item.description.split('. ', 1)[0] + "."
+            let seasons = itemData.seasons
+            let genre = itemData.genre
+            let tags01 = itemData.tags
+            let tags02 = itemData.tags02
+            let fsk = itemData.fsk
+            let keyword01 = itemData.keywords[0]
+            let keyword02 = itemData.keywords[1]
+            var shortText = itemData.description.split('. ', 1)[0] + "."
 
             let runtime;
-            if (itemData.item.serie !== true) {
-                runtime = minsToHours(itemData.item.runtime)[0] + "h " + minsToHours(itemData.item.runtime)[1] + "m"
+            if (itemData.serie !== true) {
+                runtime = minsToHours(itemData.runtime)[0] + "h " + minsToHours(itemData.runtime)[1] + "m"
             }
             let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
             $item("#text105").text = theTags
             $item("#text106").text = shortText
-        } catch (err) { console.log("shit") }
+        } catch (err) { console.log("Exception occurred") }
     })
 }
 
