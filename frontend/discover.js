@@ -148,31 +148,29 @@ export function add(event) {
 //----------click options for different tabs-------------
 
 export function foryoutext_click(event) {
-    $w("#top10").hide()
-    $w("#top10text").show()
-    $w("#coming").hide()
-    $w("#comingsoontext").show()
-    $w("#foryoutext").hide()
-    $w("#foryou").show()
     $w("#anchor2").scrollTo()
 }
 
 export function comingsoontext_click(event) {
-    $w("#top10").hide()
-    $w("#top10text").show()
-    $w("#coming").show()
-    $w("#comingsoontext").hide()
-    $w("#foryoutext").show()
-    $w("#foryou").hide()
     $w("#anchor3").scrollTo()
 }
 
 export function top10text_click(event) {
-    $w("#top10").show()
-    $w("#top10text").hide()
-    $w("#coming").hide()
-    $w("#comingsoontext").show()
-    $w("#foryoutext").show()
-    $w("#foryou").hide()
     $w("#anchor1").scrollTo()
+}
+
+export function text115_click(event) {
+	$w("#anchor1").scrollTo()
+}
+
+export function text114_click(event) {
+	$w("#anchor3").scrollTo()
+}
+
+export function text118_click(event) {
+	$w("#anchor2").scrollTo()
+}
+
+export function text117_click(event) {
+	$w("#anchor1").scrollTo()
 }
