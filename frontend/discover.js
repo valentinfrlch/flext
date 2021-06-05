@@ -11,7 +11,6 @@ $w.onReady(async function () {
         titles.push(items.items[i].title)
     }
     console.log(titles)
-    titles = ["Stranger Things", "Inception"]
     var fusionReturn = await fusion(titles) //cloud computed predictions
     console.log(fusionReturn)
     await $w("#dataset42").setFilter(wixData.filter().hasSome("title", fusionReturn))
