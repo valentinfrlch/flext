@@ -62,7 +62,7 @@ export function pull(title, type, url) {
     wixData.query("netflyxData").eq("title", title).find().then((res) => {
         if (res.items.length === 0) {
             console.log(res.items)
-            fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=b47d0bbacc0cfd37962b6bb28118f099&language=de-DE&query=" + title)
+            fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=APIKEY&language=de-DE&query=" + title)
                 .then(x => x.json())
                 .then(y => {
                     console.log(y)
@@ -71,7 +71,7 @@ export function pull(title, type, url) {
                         return false
                     } else {
                         let id = y.results[0].id
-                        fetch("https://api.themoviedb.org/3/" + type + "/" + id + "?api_key=b47d0bbacc0cfd37962b6bb28118f099&language=de-DE&append_to_response=videos,keywords,images,credits,logos")
+                        fetch("https://api.themoviedb.org/3/" + type + "/" + id + "?api_key=APIKEY&language=de-DE&append_to_response=videos,keywords,images,credits,logos")
                             .then(q => q.json())
                             .then(e => {
                                 console.log(e)
