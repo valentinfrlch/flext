@@ -8,7 +8,7 @@ $w.onReady(async function () {
     var titles = []
     var items = await $w("#dataset25").getItems(0, 5)
     for (var i = 0; i < items.items.length; i++) {
-        titles.push(items.items[i].title)
+        titles.push(items.items[i].movie.title)
     }
     console.log(titles)
     var fusionReturn = await fusion(titles) //cloud computed predictions
