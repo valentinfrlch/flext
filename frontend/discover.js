@@ -80,6 +80,28 @@ function forEachItem() {
             $item("#text106").text = shortText
         } catch (err) { console.log("Exception occurred") }
     })
+
+    $w("#repeater3").forEachItem(async ($item, itemData) => {
+        //check if item is in wishlist
+        try {
+            let seasons = itemData.seasons
+            let genre = itemData.genre
+            let tags01 = itemData.tags
+            let tags02 = itemData.tags02
+            let fsk = itemData.fsk
+            let keyword01 = itemData.keywords[0]
+            let keyword02 = itemData.keywords[1]
+            var shortText = itemData.description.split('. ', 1)[0] + "."
+
+            let runtime;
+            if (itemData.serie !== true) {
+                runtime = minsToHours(itemData.runtime)[0] + "h " + minsToHours(itemData.runtime)[1] + "m"
+            }
+            let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
+            $item("#text109").text = theTags
+            $item("#text110").text = shortText
+        } catch (err) { console.log("Exception occurred") }
+    })
 }
 
 function minsToHours(min) {
@@ -133,6 +155,7 @@ export function foryoutext_click(event) {
     $w("#comingsoontext").show()
     $w("#foryoutext").hide()
     $w("#foryou").show()
+    $w("#anchor2").scrollTo()
 }
 
 export function comingsoontext_click(event) {
@@ -142,6 +165,7 @@ export function comingsoontext_click(event) {
     $w("#comingsoontext").hide()
     $w("#foryoutext").show()
     $w("#foryou").hide()
+    $w("#anchor3").scrollTo()
 }
 
 export function top10text_click(event) {
