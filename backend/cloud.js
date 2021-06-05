@@ -7,13 +7,6 @@ export async function UserData(userId) {
     for (var i = 0; i < data.items.length; i++) {
         positiveKeywords.push(data.items[i].movie.keywords) //must include property movie
     }
-
-    //TODO
-
-    //need to count how many times each element occurs
-    //then sort after occurance
-    //output the data to the client side
-    //build a diagram with the data from backend/cloud.jsw
 }
 
 export async function dataQuery(type, data, product) {
