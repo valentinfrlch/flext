@@ -2,13 +2,13 @@
 
 import wixData from 'wix-data';
 import { fetch } from 'wix-fetch';
-import { fusion } from 'backend/Fusion';
-import { DUS } from 'backend/cloud';
+import { getSecret } from 'wix-secrets-backend';
 
 export async function updateTrends() {
+    const tmdbAPI = await getSecret("tmdb_apikey");
     var titles = []
     var queryTitles = []
-    var x = await fetch("https://api.themoviedb.org/3/trending/all/week?api_key=APIKEY&language=de-DE")
+    var x = await fetch("https://api.themoviedb.org/3/trending/all/week?api_key=" + tmdbAPI + "&language=de-DE")
     var y = await x.json()
 
     console.log("before", y)
@@ -64,6 +64,7 @@ function sortByProperty(property) {
 }
 
 export async function downloadCollections() {
+    const tmdbAPI = await getSecret("tmdb_apikey");
     var collections = []
     var collectionTitles = await wixData.query("netflyxData").isNotEmpty("collection").limit(400).find()
     for (var i = 0; i < collectionTitles.items.length; i++) {
@@ -73,11 +74,11 @@ export async function downloadCollections() {
     }
     for (var h = 0; h < collections.length; h++) {
         var q = await wixData.query("netflyxData").eq("collection", collections[h]).find() //title
-        fetch("https://api.themoviedb.org/3/search/movie?api_key=APIKEY&language=de-DE&query=" + q.items[0].title).then(x => x.json()) //item in TMDB
+        fetch("https://api.themoviedb.org/3/search/movie?api_key=" + tmdbAPI + "&language=de-DE&query=" + q.items[0].title).then(x => x.json()) //item in TMDB
             .then(y => {
-                fetch("https://api.themoviedb.org/3/movie/" + y.results[0].id + "?api_key=APIKEY&language=de-DE").then(f => f.json())
+                fetch("https://api.themoviedb.org/3/movie/" + y.results[0].id + "?api_key=" + tmdbAPI + "&language=de-DE").then(f => f.json())
                     .then(z => {
-                        fetch("https://api.themoviedb.org/3/collection/" + z.belongs_to_collection.id + "?api_key=APIKEY&language=de-DE").then(f => f.json())
+                        fetch("https://api.themoviedb.org/3/collection/" + z.belongs_to_collection.id + "?api_key=" + tmdbAPI + "&language=de-DE").then(f => f.json())
                             .then(u => {
                                 let item = {
                                     "title": u.name,
@@ -101,27 +102,20 @@ export async function downloadCollections() {
 }
 
 export async function DynamicUploadSystem() {
-    //Find relevant titles
+    const tmdbAPI = await getSecret("tmdb_apikey");
     var liked = []
     var list = []
     var download = []
     var played = []
     var trending = []
 
-    const today = new Date()
-
-    //use this to only use data from the past n days
-
-    //const filterDate = new Date(today)
-    //filterDate.setDate(filterDate.getDate() - n) //change n to a number of days to include in the analysis
-    //filterDate.toDateString()
     var likedQuery = await wixData.query("MemberPredictions").include("movie").find() //.ge("_updatedDate", filterDate)
     var listQuery = await wixData.query("myList").include("movieId").find()
     var downloadQuery = await wixData.query("Downloads").include("newField").find()
     var playedQuery = await wixData.query("UserPlayed").include("movieId").find()
 
     //also take trending data into consideration:
-    var trendingRaw = await fetch("https://api.themoviedb.org/3/trending/all/week?api_key=APIKEY&language=de-DE")
+    var trendingRaw = await fetch("https://api.themoviedb.org/3/trending/all/week?api_key=" + tmdbAPI + "&language=de-DE")
     var trendingJson = await trendingRaw.json()
 
     for (var i = 0; i < trendingJson.results.length; i++) {
@@ -195,20 +189,20 @@ export async function DynamicUploadSystem() {
     var request = []
 
     const pro = query.map(async elem => {
-        var x = await fetch("https://api.themoviedb.org/3/search/movie?api_key=APIKEY&language=de-DE&query=" + encodeURI(elem))
+        var x = await fetch("https://api.themoviedb.org/3/search/movie?api_key=" + tmdbAPI + "&language=de-DE&query=" + encodeURI(elem))
         var y = await x.json()
 
-        var w = await fetch("https://api.themoviedb.org/3/search/tv?api_key=APIKEY&language=de-DE&query=" + encodeURI(elem))
+        var w = await fetch("https://api.themoviedb.org/3/search/tv?api_key=" + tmdbAPI + "&language=de-DE&query=" + encodeURI(elem))
         var q = await w.json()
 
         try {
             movieId = y.results[0].id
             tvId = q.results[0].id
         } catch (err) {}
-        var f = await fetch("https://api.themoviedb.org/3/movie/" + movieId + "/recommendations?api_key=APIKEY&language=de-DE&page=1")
+        var f = await fetch("https://api.themoviedb.org/3/movie/" + movieId + "/recommendations?api_key=" + tmdbAPI + "&language=de-DE&page=1")
         var movieResults = await f.json()
 
-        var e = await fetch("https://api.themoviedb.org/3/tv/" + tvId + "/recommendations?api_key=APIKEY&language=de-DE&page=1")
+        var e = await fetch("https://api.themoviedb.org/3/tv/" + tvId + "/recommendations?api_key=" + tmdbAPI + "&language=de-DE&page=1")
         var tvResults = await e.json()
 
         try {
@@ -224,7 +218,7 @@ export async function DynamicUploadSystem() {
                     tvCount += 1
                 }
             }
-        } catch (err) {console.log(err)}
+        } catch (err) { console.log(err) }
     })
     await Promise.all(pro)
     output = [...new Set([...output])]
@@ -252,7 +246,7 @@ export async function DynamicUploadSystem() {
 
     console.log("requesting upload: ", newRequest)
     var update = existingQuery.items[0] //setting the to be updated item
+    console.log(update)
     update.request = newRequest //updating the requests
-    await wixData.update("DUS", update) //requesing the update
-    return newRequest
+    await wixData.update("DUS", update)
 }
