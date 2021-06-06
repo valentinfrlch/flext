@@ -6,14 +6,17 @@ let user = wixUsers.currentUser
 
 $w.onReady(async function () {
     var titles = []
+    var disliked = []
+    var search = await wixData.query("MemberAntiPredictions").eq("_owner", user.id).find()
+    for (var z = 0; z < search.items.length; z++) {
+        disliked.push(search.items[z].movie)
+    }
     var items = await $w("#dataset25").getItems(0, 5)
     for (var i = 0; i < items.items.length; i++) {
         titles.push(items.items[i].movie.title)
     }
-    console.log(titles)
     var fusionReturn = await fusion(titles) //cloud computed predictions
-    console.log(fusionReturn)
-    await $w("#dataset42").setFilter(wixData.filter().hasSome("title", fusionReturn))
+    await $w("#dataset42").setFilter(wixData.filter().hasSome("title", fusionReturn).not(wixData.filter().hasSome("_id", disliked)))
 
     $w("#dataset5").onReady(function () {
         $w("#dataset42").onReady(function () {
@@ -25,7 +28,7 @@ $w.onReady(async function () {
 function forEachItem() {
     $w("#repeater1").forEachItem(async ($item, itemData) => {
         //check if item is in wishlist
-        var query = await wixData.query("myList").eq("movieId", itemData.item._id).eq("_owner", wixUsers.currentUser.id).find()
+        var query = await wixData.query("myList").eq("movieId", itemData.item._id).eq("_owner", user.id).find()
         if (query.items.length > 0) {
             $item("#inWishlist").show()
         } else {
@@ -48,13 +51,12 @@ function forEachItem() {
             let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
             $item("#text103").text = theTags
             $item("#text66").text = shortText
-        } catch (err) { console.log("Exception occurred") }
+        } catch (err) {}
     })
 
     $w("#repeater2").forEachItem(async ($item, itemData) => {
         //check if item is in wishlist
-        console.log($item, itemData)
-        var query = await wixData.query("myList").eq("movieId", itemData._id).eq("_owner", wixUsers.currentUser.id).find()
+        var query = await wixData.query("myList").eq("movieId", itemData._id).eq("_owner", user.id).find()
         if (query.items.length > 0) {
             $item("#image94").show()
         } else {
@@ -77,7 +79,7 @@ function forEachItem() {
             let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
             $item("#text105").text = theTags
             $item("#text106").text = shortText
-        } catch (err) { console.log("Exception occurred") }
+        } catch (err) {}
     })
 
     $w("#repeater3").forEachItem(async ($item, itemData) => {
@@ -99,7 +101,7 @@ function forEachItem() {
             let theTags = [seasons, genre, tags01, tags02, fsk, keyword01, keyword02, runtime].filter(Boolean).join(" • ")
             $item("#text109").text = theTags
             $item("#text110").text = shortText
-        } catch (err) { console.log("Exception occurred") }
+        } catch (err) {}
     })
 }
 
@@ -115,13 +117,11 @@ export function remove(event) {
     let $item = $w.at(event.context);
     let currentItem = $item("#dataset5").getCurrentItem();
     let itemID = `${currentItem._id}`;
-    console.log(itemID)
 
     wixData.query("myList")
         .eq("movieId", itemID)
         .find()
         .then((queried) => {
-            console.log(queried)
             wixData.remove("myList", queried.items[0]._id).then(() => {
                 $item("#inWishlist").hide()
                 $item("#notInWishlist").show()
@@ -133,7 +133,6 @@ export function add(event) {
     let $item = $w.at(event.context);
     let currentItem = $item("#dataset5").getCurrentItem();
     let itemID = `${currentItem._id}`;
-    console.log(itemID)
 
     let toInsert = {
         "movieId": itemID
@@ -160,17 +159,17 @@ export function top10text_click(event) {
 }
 
 export function text115_click(event) {
-	$w("#anchor1").scrollTo()
+    $w("#anchor1").scrollTo()
 }
 
 export function text114_click(event) {
-	$w("#anchor3").scrollTo()
+    $w("#anchor3").scrollTo()
 }
 
 export function text118_click(event) {
-	$w("#anchor2").scrollTo()
+    $w("#anchor2").scrollTo()
 }
 
 export function text117_click(event) {
-	$w("#anchor1").scrollTo()
+    $w("#anchor1").scrollTo()
 }
