@@ -44,37 +44,29 @@ $w.onReady(async function () {
 
         await Featured()
 
-        console.log(disliked)
         var titles = []
         $w("#dataset25").onReady(async function () {
             var items = await $w("#dataset25").getItems(0, 5)
             for (var k = 0; k < items.items.length; k++) {
                 titles.push(items.items[k].movie.title)
             }
-            console.log("input", titles)
             fusionReturn = await fusion(titles) //cloud computed predictions
-            console.log("output", fusionReturn)
             await $w("#dataset21").setFilter(wixData.filter().hasSome("title", fusionReturn).not(wixData.filter().hasSome("_id", disliked)))
 
         })
     }
-    /*
-        if (!local.getItem("StoryTime")) {
-            wixWindow.openLightbox("Patch");
-            local.setItem("like", "StoryTime");
-        }
-    */
+    if (!local.getItem("githubUpdate")) {
+        wixWindow.openLightbox("Patch");
+        local.setItem("githubUpdate", "true");
+    }
     lazyLoad()
 })
 
 //----------------------Set Featured-------------------
 
 export async function Featured(product) {
-    console.log(type, data, product)
     var feature = await dataQuery(type, data, product)
-    console.log(feature)
     var rnd = Math.floor(Math.random() * feature.items.length)
-    console.log(rnd)
     featureItem = feature.items[rnd]
     if (wixWindow.formFactor !== "Mobile") {
         try {
@@ -258,7 +250,6 @@ async function taskHandler() {
         $w("#image52").hide("float", { "duration": 300, "direction": "top" });
         $w("#text104").hide("float", { "duration": 300, "direction": "top" });
         await $w("#text66").hide("float", { "duration": 300, "direction": "top" });
-        console.log(fusionReturn)
         await Featured(fusionReturn)
         $w("#text104").show("float", { "duration": 300, "direction": "bottom" });
         $w("#text66").show("float", { "duration": 300, "direction": "bottom" });
@@ -270,7 +261,6 @@ async function taskHandler() {
         $w("#text66").hide("float", { "duration": 300, "direction": "top" });
         $w("#text64").hide("float", { "duration": 300, "direction": "top" });
         await $w("#columnStrip1").hide("float", { "duration": 300, "direction": "top" });
-        console.log(fusionReturn)
         await Featured(fusionReturn)
         $w("#text66").show("float", { "duration": 300, "direction": "bottom" });
         $w("#text64").show("float", { "duration": 300, "direction": "bottom" });
@@ -387,7 +377,6 @@ export async function series(event) {
         await $w("#movies").show("float", { "duration": 300, "direction": "right" })
         $w("#series").show("fade", { "duration": 100 })
     }
-    console.log(type, data)
 }
 
 export function inWishlist(event, $w) {
