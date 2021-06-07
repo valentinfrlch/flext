@@ -1,5 +1,3 @@
-//scheduled tasks
-
 import wixData from 'wix-data';
 import { fetch } from 'wix-fetch';
 import { getSecret } from 'wix-secrets-backend';
