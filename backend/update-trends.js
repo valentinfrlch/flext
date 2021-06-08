@@ -1,3 +1,5 @@
+//scheduled tasks
+
 import wixData from 'wix-data';
 import { fetch } from 'wix-fetch';
 import { getSecret } from 'wix-secrets-backend';
@@ -244,7 +246,7 @@ export async function DynamicUploadSystem() {
 
     console.log("requesting upload: ", newRequest)
     var update = existingQuery.items[0] //setting the to be updated item
-    console.log(update)
     update.request = newRequest //updating the requests
     await wixData.update("DUS", update)
+    return update
 }
