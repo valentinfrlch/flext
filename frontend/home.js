@@ -29,10 +29,10 @@ $w.onReady(async function () {
         let name = $w("#dataset33").getCurrentItem().firstName
         if (name !== undefined) {
             $w("#text60").text = "Mit dem Profil von " + name + " weiterschauen"
-            $w('#text47').text = "Top-Auswahl für " + name + "  ›"
+            $w('#text47').text = "Top-Auswahl für " + name
         } else {
             $w("#text60").text = "Weiterschauen"
-            $w('#text47').text = "Top-Auswahl für dich ›"
+            $w('#text47').text = "Top-Auswahl für dich"
         }
     })
 
