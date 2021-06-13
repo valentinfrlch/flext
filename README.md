@@ -1,2 +1,2 @@
 # flext
-Repository for all Flext related code.
+Open source repository for front- and backend code that runs Flext.
