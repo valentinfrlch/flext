@@ -250,3 +250,27 @@ export async function DynamicUploadSystem() {
     await wixData.update("DUS", update)
     return update
 }
+
+
+
+
+/*
+WIP
+export function cleanUp() {
+    var databases = [
+        ["myList", "movieId"],
+        ["Downloads", "newField"],
+        ["UserPlayed", "movieId"],
+        ["MemberPredictions", "movie"],
+        ["MemberAntiPredictions", "movie"]
+    ]
+
+    databases.forEach(async element => {
+        var item = await wixData.
+        var occurance = await wixData.queryReferenced(element[0], element[1], )
+        if (occurance != undefined) {
+            console.log(occurance, element)
+        }
+    })
+}
+*/
