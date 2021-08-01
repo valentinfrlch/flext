@@ -173,3 +173,21 @@ export function text118_click(event) {
 export function text117_click(event) {
     $w("#anchor1").scrollTo()
 }
+
+
+/*                                              
+
+
+
+
+
+
+
+
+ ******  **                   **  
+ ******  **   *****   ** **  *****
+ **      **  *******   ***    **  
+ **      **   *****  *** **    *** valentinfrlch
+
+ You know, for movies.
+*/
