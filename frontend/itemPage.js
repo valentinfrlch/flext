@@ -500,3 +500,12 @@ export function downloadGen_v2() {
 export function castPopup(event) {
 	wixWindow.openLightbox("Cast", $w("#itemdetails").getCurrentItem().cast)
 }
+
+
+/*                                              
+ ******  **                   **  
+ ******  **   *****   ** **  *****
+ **      **  *******   ***    **  
+ **      **   *****  *** **    *** valentinfrlch
+ You know, for movies.
+*/
