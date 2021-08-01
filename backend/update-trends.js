@@ -16,16 +16,16 @@ export async function updateTrends() {
     console.log("after", results)
 
     for (var i = 0; i < y.results.length; i++) {
-        if (y.results[i].title !== undefined) {
-            titles.push(y.results[i].title)
+        if (y.results[19 - i].title !== undefined) {
+            titles.push(y.results[19 - i].title) // movie
         } else {
-            titles.push(y.results[i].name)
+            titles.push(y.results[19 - i].name) //tv show
         }
     }
     console.log(titles)
     var query = await wixData.query("netflyxData").descending("likeCount").hasSome("title", titles).find() //.descending("_updatedDate")
-    var top = await wixData.query("Top").ascending("rank").find() //Defines the item to update
-    console.log(top.items)
+    var top = await wixData.query("Top").ascending("rank").find() //Defines the items to update
+    console.log(top.items, query.items)
 
     for (var j = 0; j < query.items.length; j++) {
         queryTitles.push(query.items[j].title)
