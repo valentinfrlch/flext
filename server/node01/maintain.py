@@ -45,17 +45,11 @@ def maintain(mode):
     else:
         path = tvPath
     for files in os.walk(path):
-        movieQuery = requests.get("https://api.themoviedb.org/3/search/movie?api_key=" + TMDB_KEY + "&language=de-DE&query=" + file[0].replace(".mp4", ""))
-        tvQuery= requests.get("https://api.themoviedb.org/3/search/tv?api_key=" + TMDB_KEY + "&language=de-DE&query=" + file[0].replace(".mp4", ""))
-
-        movieQuery = movieQuery.json()
-        tvQuery = tvQuery.json()
-        match = ""
+        title = files[2]
+        query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + file[0].replace(".mp4", ""))
+        query = query.json()
         try:
-            if mode == "movie":
-                match = movieQuery["results"][0]["title"]
-            else:
-                match = tvQuery["results"][0]["title"]
+            match = query["results"][0]["title"]
         except:
             print("[404] no match found")
         
@@ -66,6 +60,8 @@ def maintain(mode):
             ans = input("rename " + title + " -> " + match + "?")
             if ans == "y":
                 os.rename("<oldPath>, <newPath>")
+            elif ans == "m":
+                os.rename("<oldPath>", input("provide a new name: "))
             else:
                 print("not changing")
         else:
