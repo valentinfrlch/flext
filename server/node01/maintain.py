@@ -68,10 +68,17 @@ def maintain(mode):
             if match != title:
                 print("No match found for " + title)
                 ans = input("rename " + title + " -> " + match + "?")
+                if mode == "movie":
+                    match = match + ".mp4"
+                    oldPath = os.path.join(path, title)
+                    newPath = os.path.join(path, match)
                 if ans == "y":
-                    os.rename("<oldPath>, <newPath>")
+                    os.rename(oldPath, newPath)
                 elif ans == "m":
-                    os.rename("<oldPath>", input("provide a new name: "))
+                    ren = input("provide a new name: ")
+                    if mode == "movie":
+                        ren = ren + ".mp4"
+                    os.rename(oldPath, os.path.join(path, ren))
                 else:
                     print("not changing")
             else:
