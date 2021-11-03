@@ -50,9 +50,7 @@ def maintain(mode):
         i = 1
     for files in os.walk(path):
         for file in files[i]:
-            print(files)
             title = file.replace(".mp4", "")
-            print(title)
             query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + title.replace(".mp4", ""))
             query = query.json()
             match = ""
@@ -67,11 +65,11 @@ def maintain(mode):
             #check if NOT 100% match:
             if match != title:
                 print("No match found for " + title)
-                ans = input("rename " + title + " -> " + match + "?")
+                ans = input("rename " + title + " -> " + match + "? ")
                 if mode == "movie":
                     match = match + ".mp4"
-                    oldPath = os.path.join(path, title)
-                    newPath = os.path.join(path, match)
+                oldPath = os.path.join(path, title)
+                newPath = os.path.join(path, match)
                 if ans == "y":
                     os.rename(oldPath, newPath)
                 elif ans == "m":
