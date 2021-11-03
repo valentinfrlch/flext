@@ -44,29 +44,38 @@ def maintain(mode):
         path = moviePath
     else:
         path = tvPath
+    if mode == "movie":
+        i = 2
+    else:
+        i = 1
     for files in os.walk(path):
-        title = files[2]
-        query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + file[0].replace(".mp4", ""))
-        query = query.json()
-        try:
-            match = query["results"][0]["title"]
-        except:
-            print("[404] no match found")
-        
-        #check if NOT 100% match:
-        if match != title:
-            print("No match found: ")
-            print(title, match)
-            ans = input("rename " + title + " -> " + match + "?")
-            if ans == "y":
-                os.rename("<oldPath>, <newPath>")
-            elif ans == "m":
-                os.rename("<oldPath>", input("provide a new name: "))
+        for file in files[i]:
+            print(files)
+            title = file.replace(".mp4", "")
+            print(title)
+            query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + title.replace(".mp4", ""))
+            query = query.json()
+            match = ""
+            try:
+                match = query["results"][0]["title"]
+            except:
+                try:
+                    match = query["results"][0]["name"]
+                except:
+                    print("[404] no match found")
+            
+            #check if NOT 100% match:
+            if match != title:
+                print("No match found for " + title)
+                ans = input("rename " + title + " -> " + match + "?")
+                if ans == "y":
+                    os.rename("<oldPath>, <newPath>")
+                elif ans == "m":
+                    os.rename("<oldPath>", input("provide a new name: "))
+                else:
+                    print("not changing")
             else:
-                print("not changing")
-        else:
-            print(title + " is a match.")
+                print(title + " is a match.")
 
 
-movies()
-tv()
+maintain("tv")
