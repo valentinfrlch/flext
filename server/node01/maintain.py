@@ -50,6 +50,8 @@ def maintain(mode):
         i = 1
     for files in os.walk(path):
         for file in files[i]:
+            if "Staffel" in file or "staffel" in file:
+                break
             title = file.replace(".mp4", "")
             query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + title.replace(".mp4", ""))
             query = query.json()
