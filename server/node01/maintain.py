@@ -46,11 +46,16 @@ def maintain(mode=["movie", "tv"]):
         jobs.append(tvPath)
     
     for go in jobs:
+        size = len([name for name in os.listdir(go) if os.path.isfile(os.path.join(go, name))])
+        bar = Bar('scanning...', max=size)
+        mode = ""
         for files in os.walk(go):
             if go == moviePath:
                 i = 2
+                mode = "movie"
             else:
                 i = 1
+                mode = "tv"
             for file in files[i]:
                 if "Staffel" in file or "staffel" in file or "Season" in file or "season" in file:
                     break
@@ -76,20 +81,22 @@ def maintain(mode=["movie", "tv"]):
                     ans = input("rename " + title + " -> " + match + "? ")
                     if mode == "movie":
                         match = match + ".mp4"
-                    oldPath = os.path.join(path, title)
-                    newPath = os.path.join(path, match)
+                    oldPath = os.path.join(go, title)
+                    newPath = os.path.join(go, match)
                     if ans == "y":
                         os.rename(oldPath, newPath)
                     elif ans == "m":
                         ren = input("provide a new name: ")
                         if mode == "movie":
                             ren = ren + ".mp4"
-                        os.rename(oldPath, os.path.join(path, ren))
+                        os.rename(oldPath, os.path.join(go, ren))
                     else:
                         print("not changing")
                 else:
                     print(title + " is a match.")
                 matches = []
+                bar.next()
+        bar.finish()
 
 
 maintain("tv")
