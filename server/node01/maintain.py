@@ -38,51 +38,58 @@ def tv():
                         bar.next()
     bar.finish()
 
-def maintain(mode):
-    path = ""
-    if mode == "movie":
-        path = moviePath
-    else:
-        path = tvPath
-    if mode == "movie":
-        i = 2
-    else:
-        i = 1
-    for files in os.walk(path):
-        for file in files[i]:
-            if "Staffel" in file or "staffel" in file:
-                break
-            title = file.replace(".mp4", "")
-            query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + title.replace(".mp4", ""))
-            query = query.json()
-            match = ""
-            try:
-                match = query["results"][0]["title"]
-            except:
-                try:
-                    match = query["results"][0]["name"]
-                except:
-                    print("[404] no match found")
-            
-            #check if NOT 100% match:
-            if match != title:
-                print("No match found for " + title)
-                ans = input("rename " + title + " -> " + match + "? ")
-                if mode == "movie":
-                    match = match + ".mp4"
-                oldPath = os.path.join(path, title)
-                newPath = os.path.join(path, match)
-                if ans == "y":
-                    os.rename(oldPath, newPath)
-                elif ans == "m":
-                    ren = input("provide a new name: ")
-                    if mode == "movie":
-                        ren = ren + ".mp4"
-                    os.rename(oldPath, os.path.join(path, ren))
-                else:
-                    print("not changing")
+def maintain(mode=["movie", "tv"]):
+    jobs = []
+    if "movie" in mode:
+        jobs.append(moviePath)
+    if "tv" in mode:
+        jobs.append(tvPath)
+    
+    for go in jobs:
+        for files in os.walk(go):
+            if go == moviePath:
+                i = 2
             else:
-                print(title + " is a match.")
+                i = 1
+            for file in files[i]:
+                if "Staffel" in file or "staffel" in file or "Season" in file or "season" in file:
+                    break
+                title = file.replace(".mp4", "")
+                query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + title.replace(".mp4", ""))
+                query = query.json()
+                matches = []
+                try:
+                    for match in query["results"]:
+                        matches.append(match["title"])
+                    print(matches)
+                except:
+                    try:
+                        for match in query["results"]:
+                            matches.append(match["name"])
+                    except:
+                        print("[404] no match found")
+                
+                #check if NOT 100% match:
+                if title not in matches:
+                    match = matches[0]
+                    print("No match found for " + title)
+                    ans = input("rename " + title + " -> " + match + "? ")
+                    if mode == "movie":
+                        match = match + ".mp4"
+                    oldPath = os.path.join(path, title)
+                    newPath = os.path.join(path, match)
+                    if ans == "y":
+                        os.rename(oldPath, newPath)
+                    elif ans == "m":
+                        ren = input("provide a new name: ")
+                        if mode == "movie":
+                            ren = ren + ".mp4"
+                        os.rename(oldPath, os.path.join(path, ren))
+                    else:
+                        print("not changing")
+                else:
+                    print(title + " is a match.")
+                matches = []
 
 
 maintain("tv")
