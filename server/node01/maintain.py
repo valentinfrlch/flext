@@ -66,7 +66,6 @@ def maintain(mode=["movie", "tv"]):
                 try:
                     for match in query["results"]:
                         matches.append(match["title"])
-                    print(matches)
                 except:
                     try:
                         for match in query["results"]:
@@ -76,7 +75,11 @@ def maintain(mode=["movie", "tv"]):
                 
                 #check if NOT 100% match:
                 if title not in matches:
-                    match = matches[0]
+                    try:
+                        match = matches[0]
+                    except:
+                        print(title, "cannot be matched")
+                        break
                     print("No match found for " + title)
                     ans = input("rename " + title + " -> " + match + "? ")
                     if mode == "movie":
@@ -92,11 +95,9 @@ def maintain(mode=["movie", "tv"]):
                         os.rename(oldPath, os.path.join(go, ren))
                     else:
                         print("not changing")
-                else:
-                    print(title + " is a match.")
                 matches = []
                 bar.next()
         bar.finish()
 
 
-maintain("tv")
+maintain()
