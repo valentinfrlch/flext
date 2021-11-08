@@ -63,6 +63,7 @@ def maintain(mode=["movie", "tv"]):
                 query = requests.get("https://api.themoviedb.org/3/search/" + mode + "?api_key=" + TMDB_KEY + "&language=de-DE&query=" + title.replace(".mp4", ""))
                 query = query.json()
                 matches = []
+                fails = []
                 try:
                     for match in query["results"]:
                         matches.append(match["title"])
@@ -71,33 +72,14 @@ def maintain(mode=["movie", "tv"]):
                         for match in query["results"]:
                             matches.append(match["name"])
                     except:
-                        print("[404] no match found")
+                        shit = 1
                 
                 #check if NOT 100% match:
                 if title not in matches:
-                    try:
-                        match = matches[0]
-                    except:
-                        print(title, "cannot be matched")
-                        break
-                    print("No match found for " + title)
-                    ans = input("rename " + title + " -> " + match + "? ")
-                    if mode == "movie":
-                        match = match + ".mp4"
-                    oldPath = os.path.join(go, title)
-                    newPath = os.path.join(go, match)
-                    if ans == "y":
-                        os.rename(oldPath, newPath)
-                    elif ans == "m":
-                        ren = input("provide a new name: ")
-                        if mode == "movie":
-                            ren = ren + ".mp4"
-                        os.rename(oldPath, os.path.join(go, ren))
-                    else:
-                        print("not changing")
-                matches = []
+                   fails.append(title)
                 bar.next()
         bar.finish()
+    print(fails)
 
 
 maintain()
