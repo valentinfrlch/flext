@@ -1,5 +1,6 @@
 #/usr/bin/python3
 from phue import Bridge
+import time
 
 v = Bridge('10.0.1.145')
 v.connect()
@@ -18,12 +19,15 @@ def effects(effect):
         warning: flashing red
         traffic: blue slowly fading
         welcome: blue fading in and out quickly
+    
+    v1.1 aded support for effects
     """
 
     commands = []
 
     if effect == "overheating":
-        commands.append({'transitiontime' : 30, 'on' : True, 'bri' : 254})
+        effectTime = 1 #in seconds
+        commands.append([effectTime, {'transitiontime' : 30, 'on' : True, 'bri' : 254}])
     if effect == "warning":
         command =  {'transitiontime' : 30, 'on' : True, 'bri' : 254}
     if effect == "traffic":
@@ -32,4 +36,5 @@ def effects(effect):
         command =  {'transitiontime' : 30, 'on' : True, 'bri' : 254}
 
     for request in commands:
-        v.set_light(7, request)
+        v.set_light(7, request[1])
+        time.sleep(request[0])
