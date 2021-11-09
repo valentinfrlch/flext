@@ -16,9 +16,12 @@ v.connect() # instantiate bridge
 def mainThread():
     tempThreshold = 80
     if monitor()[0] >= tempThreshold:
-        effects("warning")
+        effect = "warning"
     if monitor()[1] >= 111093288286:
-        effects("warning")
+        effect = "warning"
+    lighting_thread = threading.Thread(target=effects, args=effect)
+    lighting_thread.start()
+
 
 
 def monitor():
@@ -60,10 +63,5 @@ def effects(effect):
         time.sleep(request[0])
 
 
-
-
-
-
-
-lighting_thread = threading.Thread(target=thread_function, args=(1,))
-lighting_thread.start()
+monitor_thread = threading.Thread(target=monitor)
+monitor_thread.start()
