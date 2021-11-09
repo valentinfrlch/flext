@@ -4,22 +4,29 @@ import time
 import threading
 from gpiozero import CPUTemperature
 import psutil
-NETWORK_INTERFACE = 'en0'
+NETWORK_INTERFACE = 'eth0'
 netio = psutil.net_io_counters(pernic=True)
 
 
 v = Bridge('10.0.1.145')
-v.connect()
-
-v.get_api()
+v.connect() # instantiate bridge
 
 # main funtions
+
+def mainThread():
+    tempThreshold = 80
+    if monitor()[0] >= tempThreshold:
+        effects("warning")
+    if monitor()[1] >= 111093288286:
+        effects("warning")
+
 
 def monitor():
     usageMatrix = []
     usageMatrix.append(CPUTemperature()) #CPU
     usageMatrix.append(netio[NETWORK_INTERFACE].bytes_sent + netio[NETWORK_INTERFACE].bytes_recv)
-
+    
+    return usageMatrix
 
 
 def effects(effect):
