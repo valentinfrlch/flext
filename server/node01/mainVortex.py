@@ -4,29 +4,34 @@ import time
 import threading
 from gpiozero import CPUTemperature
 import psutil
+from fanshim import FanShim
+
+#constructors and global definitions
+fanshim = FanShim()
 NETWORK_INTERFACE = 'eth0'
 netio = psutil.net_io_counters(pernic=True)
-
-
 v = Bridge('10.0.1.145')
-v.connect() # instantiate bridge
+v.connect()
+
 
 # main funtions
-
 def mainThread():
     tempThreshold = 80
-    if monitor()[0] >= tempThreshold:
-        effect = "warning"
-    if monitor()[1] >= 111093288286:
-        effect = "warning"
-    lighting_thread = threading.Thread(target=effects, args=effect)
-    lighting_thread.start()
+    while True:
+        if int(monitor()[0]) >= tempThreshold:
+            effect = "warning"
+            fanshim.set_light(255, 0, 0)
+        if monitor()[1] >= 111093288286: #todo: pihole API?
+            effect = "warning"
+        lighting_thread = threading.Thread(target=effects, args=["warning"])
+        lighting_thread.start()
+        time.sleep(5)
 
 
 
 def monitor():
     usageMatrix = []
-    usageMatrix.append(CPUTemperature()) #CPU
+    usageMatrix.append(CPUTemperature().temperature) #CPU
     usageMatrix.append(netio[NETWORK_INTERFACE].bytes_sent + netio[NETWORK_INTERFACE].bytes_recv)
     
     return usageMatrix
@@ -49,19 +54,16 @@ def effects(effect):
         effectTime = 1 #in seconds
         commands.append([effectTime, {'transitiontime' : 30, 'on' : True, 'bri' : 254}])
     if effect == "warning":
-        effectTime = 1 #in seconds
+        effectTime = 1
         commands.append([effectTime, {'transitiontime' : 30, 'on' : True, 'bri' : 254}])
     if effect == "traffic":
-        effectTime = 1 #in seconds
+        effectTime = 1
         commands.append([effectTime, {'transitiontime' : 30, 'on' : True, 'bri' : 254}])
     if effect == "welcome":
-        effectTime = 1 #in seconds
+        effectTime = 1
         commands.append([effectTime, {'transitiontime' : 30, 'on' : True, 'bri' : 254}])
 
     for request in commands:
         v.set_light(7, request[1])
         time.sleep(request[0])
 
-
-monitor_thread = threading.Thread(target=monitor)
-monitor_thread.start()
