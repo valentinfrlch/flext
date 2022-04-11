@@ -105,6 +105,7 @@ function minsToHours(min) {
     return [rhours, rminutes]
 }
 
+
 export async function recommendationLiked() {
     var rec;
     var positiveK = []

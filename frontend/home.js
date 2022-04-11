@@ -18,6 +18,7 @@ var fusionReturn = []
 let id;
 
 $w.onReady(async function () {
+    // run on page load
     if (wixWindow.formFactor !== "Mobile") {
         //Desktop
         $w("#image52").collapse()
