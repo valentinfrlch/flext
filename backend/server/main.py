@@ -30,15 +30,23 @@ def search_movie(movie_name):
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     dr = webdriver.Chrome(options=options)
-    s = requests.Session()
-    r = s.get(link, headers=headers)
-    soup = BeautifulSoup(r.content, "html.parser")
-    # find all iframes with id "iframe-embed"
-    iframes = soup.find_all("iframe", id="iframe-embed")
-    # get the first iframe src
-    iframe_src = iframes[0].get("src")
-    print(iframe_src)
+    dr.get(link)
+    time.sleep(5)
+    soup = BeautifulSoup(dr.page_source, "html.parser")
+    # select iframe and get src
+    src = soup.find_all("iframe")[0].get("src")
+    return src, movie_name
 
 
+def download_handler(url, name):
+    # add the link to a file in the folder "folderwatch"
+    # open a new file in folderwatch
+    with open("/home/pi/folderwatch/" + name + ".txt", "w") as f:
+        f.write("text=" + url + "\n" + "filename=" +
+                name.replace("+", " ") + ".mp4")
+        # close file
+        f.close()
 
-search_movie("Uncharted")
+
+src, movie_name = search_movie("Uncharted")
+download_handler(src, movie_name)
